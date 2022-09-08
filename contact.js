@@ -101,41 +101,52 @@ const deleteContact = (nama) => {
 
 // Mengupdate Contact
 const updateContact = (oldnama, nama, email, nohp) => {
-  const contact = { nama, email, nohp }; 
-  const contacts = loadContact();
-  const contactLength = contacts.length; // Panjang Data
+  const contacts = loadContact(); // Data
+  // Memfilter contact yang tidak sama
+  const NewContact = contacts.filter((contact) => contact.nama.toLowerCase() !== oldnama.toLowerCase());
 
-  //Cek Email
+  // Cek length Contact jika sama maka data tidak ada
+  if(contacts.length === NewContact.length) {
+    console.log('Nama Contact tidak ada!');
+    return false;
+  }
+
+  // Mencari data Lama
+  const OldContact = contacts.find((contact) => contact.nama.toLowerCase() === oldnama.toLowerCase());
+  const index = contacts.indexOf(OldContact); // Mengembalikan Posisi Pertama Jadi ditentukan
+
+  // Jika nama diubah
+  if(nama) {
+    // Cek Duplikat Nama
+    const duplikat = contacts.find((contact) => contact.nama.toLowerCase() === nama.toLowerCase() );
+    if(duplikat) {
+      console.log('Maaf, Contact yang anda masukan sudah tersedia.');
+      return false;
+    }
+    contacts[index].nama = nama; 
+  }
+
+  //Jika Email diubah
   if(email) {
     if(!validator.isEmail(email)) {
       console.log('Maaf Email Tidak Valid!');
       return false;
     }
+    contacts[index].email = email;
   }
 
-  // Cek Mobile Phone
-  if(!validator.isMobilePhone(nohp, 'id-ID')) {
-    console.log('Maaf No Hp Tidak Valid!');
-    return false;
+  // Jika No hp diubah
+  if(nohp) {
+    if(!validator.isMobilePhone(nohp, 'id-ID')) {
+      console.log('Maaf No Hp Tidak Valid!');
+      return false;
+    }
+    contacts[index].nohp = nohp;
   }
 
-  // Delete Contact Lama
-  deleteContact(oldnama);
-
-  // Data Contact Baru
-  const contacts2 = loadContact();
-  const contactLength2 = contacts2.length;
-
-  // Cek Panjang Data Lama dan Data Baru
-  if(contactLength === contactLength2) {
-    return false;
-  } else {
-    // Save Contact Baru
-    contacts2.push(contact); // Push data
-    // Tulis data ke file dan ubah ke string
-    fs.writeFileSync(filePath, JSON.stringify(contacts2, null, 2));
-    console.log('Data Sudah di Update');
-  }
+  // Save Data yang sudah di Update
+  fs.writeFileSync(filePath, JSON.stringify(contacts, null, 2));
+  console.log('Data Contact Berhasil di Update!');
 }
 
 module.exports = { SaveContact, listContact, detailContact, deleteContact, updateContact };

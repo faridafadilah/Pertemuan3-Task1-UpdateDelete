@@ -78,7 +78,7 @@ yargs.command({
     },
     newNama: {
       describe: 'Contact New Name',
-      demandOption: true,
+      demandOption: false,
       type: 'string',
     },
     email: {
@@ -88,7 +88,7 @@ yargs.command({
     },
     nohp: {
         describe: 'Contact Mobile Phone',
-        demandOption: true,
+        demandOption: false,
         type: 'string',
     },
   },
